@@ -1,0 +1,27 @@
+[data]
+swir_dir = "./data/NSLSR_train/SWIR"
+lwir_dir = "./data/NSLSR_train/LWIR"
+label_dir = "./data/NSLSR_train/labels"
+image_height = 512
+image_width = 640
+
+[model]
+base_channels = 8
+patch_size = 8
+attn_heads = 8
+
+[train]
+seed = 3407
+batch_size = 8
+lr = 0.0001
+total_iter = 30000
+warmup_iter = 500
+alpha = 0.5
+beta = 0.5
+sigma = 0.2
+gamma = 2.7
+
+[runtime]
+device = "cuda"
+num_workers = 4
+deterministic = true

@@ -1,0 +1,13 @@
+name: lsfdnet
+version: 0.1.0
+type: perception
+inputs:
+  - name: swir_image
+    type: sensor_msgs/Image
+  - name: lwir_image
+    type: sensor_msgs/Image
+outputs:
+  - name: fused_image
+    type: sensor_msgs/Image
+  - name: metadata
+    type: std_msgs/String

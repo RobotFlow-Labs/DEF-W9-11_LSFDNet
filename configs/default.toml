@@ -1,0 +1,27 @@
+[data]
+swir_dir = ""
+lwir_dir = ""
+label_dir = ""
+image_height = 320
+image_width = 320
+
+[model]
+base_channels = 8
+patch_size = 8
+attn_heads = 8
+
+[train]
+seed = 3407
+batch_size = 2
+lr = 0.0001
+total_iter = 2000
+warmup_iter = 200
+alpha = 0.5
+beta = 0.5
+sigma = 0.2
+gamma = 2.7
+
+[runtime]
+device = "cpu"
+num_workers = 0
+deterministic = true
