@@ -14,7 +14,9 @@ def create_app() -> Any:
     try:
         from fastapi import FastAPI, File, UploadFile
     except ModuleNotFoundError as exc:  # pragma: no cover
-        raise RuntimeError("FastAPI is not installed. Add fastapi + uvicorn to environment.") from exc
+        raise RuntimeError(
+            "FastAPI is not installed. Add fastapi + uvicorn to environment."
+        ) from exc
 
     app = FastAPI(title="LSFDNet API", version="0.1.0")
     model = create_model(device="cpu")
@@ -29,12 +31,19 @@ def create_app() -> Any:
         return {"status": "ready"}
 
     @app.post("/predict")
-    async def predict(swir: UploadFile = File(...), lwir: UploadFile = File(...)) -> dict[str, Any]:
-        from PIL import Image
+    async def predict(swir: UploadFile = File(...), lwir: UploadFile = File(...)) -> dict[str, Any]:  # noqa: B008
         from io import BytesIO
 
-        sw_arr = np.asarray(Image.open(BytesIO(await swir.read())).convert("L"), dtype=np.float32) / 255.0
-        lw_arr = np.asarray(Image.open(BytesIO(await lwir.read())).convert("L"), dtype=np.float32) / 255.0
+        from PIL import Image
+
+        sw_arr = (
+            np.asarray(Image.open(BytesIO(await swir.read())).convert("L"), dtype=np.float32)
+            / 255.0
+        )
+        lw_arr = (
+            np.asarray(Image.open(BytesIO(await lwir.read())).convert("L"), dtype=np.float32)
+            / 255.0
+        )
         sw = torch.from_numpy(sw_arr).unsqueeze(0).unsqueeze(0)
         lw = torch.from_numpy(lw_arr).unsqueeze(0).unsqueeze(0)
 

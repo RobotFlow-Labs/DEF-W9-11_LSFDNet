@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import torch
+import torch.nn.functional as F  # noqa: N812
 from torch import nn
-import torch.nn.functional as F
 
 
 class SobelXY(nn.Module):
@@ -27,7 +27,9 @@ class OEFusionLoss(nn.Module):
         self.sobel = SobelXY()
 
     @staticmethod
-    def _mask_from_boxes(boxes: torch.Tensor, shape: tuple[int, int], device: torch.device) -> torch.Tensor:
+    def _mask_from_boxes(
+        boxes: torch.Tensor, shape: tuple[int, int], device: torch.device
+    ) -> torch.Tensor:
         h, w = shape
         if boxes.numel() == 0:
             return torch.zeros((1, 1, h, w), device=device)
@@ -70,13 +72,19 @@ class OEFusionLoss(nn.Module):
 
         if labels is None:
             labels = torch.zeros((0, 5), device=fused.device)
-        mask = self._mask_from_boxes(labels.to(fused.device), (fused.shape[-2], fused.shape[-1]), fused.device)
+        mask = self._mask_from_boxes(
+            labels.to(fused.device), (fused.shape[-2], fused.shape[-1]), fused.device
+        )
         n_pixels = mask.sum()
         if n_pixels > 0:
-            li = (F.l1_loss(fused, torch.max(swir, x_mean_obj), reduction="none") * mask).sum() / n_pixels
-            lg = (F.l1_loss(g_fused, torch.max(g_swir, g_obj), reduction="none") * mask).sum() / n_pixels
+            li = (
+                F.l1_loss(fused, torch.max(swir, x_mean_obj), reduction="none") * mask
+            ).sum() / n_pixels
+            lg = (
+                F.l1_loss(g_fused, torch.max(g_swir, g_obj), reduction="none") * mask
+            ).sum() / n_pixels
             loss_obj = beta * li + (1.0 - beta) * lg
         else:
             loss_obj = fused.new_tensor(0.0)
 
-        return sigma * loss_global + (1.0 - sigma) * loss_obj
+        return (1.0 - sigma) * loss_global + sigma * loss_obj

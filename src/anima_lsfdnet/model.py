@@ -73,13 +73,9 @@ class FusionDecoder(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         self.net = nn.Sequential(
-            ConvBlock(8, 8, prelu=True),
             ConvBlock(8, 16, prelu=True),
-            ConvBlock(16, 16, prelu=True),
             ConvBlock(16, 32, prelu=True),
-            ConvBlock(32, 32, prelu=True),
             ConvBlock(32, 16, prelu=True),
-            ConvBlock(16, 16, prelu=True),
             ConvBlock(16, 4, prelu=True),
             nn.ReflectionPad2d(1),
             nn.Conv2d(4, 1, kernel_size=3, stride=1),
@@ -100,15 +96,18 @@ class LSFDNetFusionCore(nn.Module):
 
     def __init__(self, patch_size: int = 8, heads: int = 8):
         super().__init__()
-        self.base = FeatureExtractorBase()
+        self.base_sw = FeatureExtractorBase()
+        self.base_lw = FeatureExtractorBase()
         self.fsw = FeatureExtractorMulNet()
         self.flw = FeatureExtractorMulNet()
         self.mlc_fusion = MulLayerFusion(channels=8, patch_size=patch_size, heads=heads)
         self.decoder = FusionDecoder()
 
-    def forward(self, swir: torch.Tensor, lwir: torch.Tensor, det_attention: torch.Tensor | None = None) -> tuple[torch.Tensor, torch.Tensor]:
-        sw_base = self.base(swir)
-        lw_base = self.base(lwir)
+    def forward(
+        self, swir: torch.Tensor, lwir: torch.Tensor, det_attention: torch.Tensor | None = None
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        sw_base = self.base_sw(swir)
+        lw_base = self.base_lw(lwir)
         fsw = self.fsw(sw_base)
         flw = self.flw(lw_base)
         fused_feature = self.mlc_fusion(fsw, flw)

@@ -1,0 +1,29 @@
+# Debug config -- quick smoke test (synthetic data, 2 iterations, CPU)
+
+[data]
+swir_dir = ""
+lwir_dir = ""
+label_dir = ""
+image_height = 64
+image_width = 64
+
+[model]
+base_channels = 8
+patch_size = 8
+attn_heads = 8
+
+[train]
+seed = 42
+batch_size = 1
+lr = 0.0001
+total_iter = 2
+warmup_iter = 1
+alpha = 0.5
+beta = 0.5
+sigma = 0.2
+gamma = 2.7
+
+[runtime]
+device = "cpu"
+num_workers = 0
+deterministic = true

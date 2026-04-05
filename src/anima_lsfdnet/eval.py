@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
@@ -15,18 +14,24 @@ PAPER_BASELINE = {
     "mAP50_95": 0.770,
     "EN": 7.181,
     "SF": 21.022,
+    "VIF": 0.611,
     "Qabf": 0.520,
 }
 
 
 def _mean_metrics(items: list[FusionMetrics]) -> dict[str, float]:
     if not items:
-        return {"en": 0.0, "sf": 0.0, "sd": 0.0, "scd": 0.0, "qabf": 0.0}
-    arr = {k: np.array([getattr(it, k) for it in items], dtype=np.float64) for k in ("en", "sf", "sd", "scd", "qabf")}
-    return {k: float(v.mean()) for k, v in arr.items()}
+        return {"en": 0.0, "sf": 0.0, "sd": 0.0, "scd": 0.0, "vif": 0.0, "qabf": 0.0}
+    keys = ("en", "sf", "sd", "scd", "vif_val", "qabf")
+    arr = {k: np.array([getattr(it, k) for it in items], dtype=np.float64) for k in keys}
+    out = {k: float(v.mean()) for k, v in arr.items()}
+    out["vif"] = out.pop("vif_val")
+    return out
 
 
-def evaluate_fusion(swir_dir: str | Path, lwir_dir: str | Path, fused_dir: str | Path) -> dict[str, float]:
+def evaluate_fusion(
+    swir_dir: str | Path, lwir_dir: str | Path, fused_dir: str | Path
+) -> dict[str, float]:
     fused_dir = Path(fused_dir)
     all_metrics: list[FusionMetrics] = []
     for swir_path, lwir_path in pair_files_by_stem(swir_dir, lwir_dir):
@@ -58,6 +63,7 @@ def write_report(metrics: dict[str, float], out_dir: str | Path) -> None:
         f"- SF: {metrics['sf']:.4f} (paper: {PAPER_BASELINE['SF']})",
         f"- SD: {metrics['sd']:.4f}",
         f"- SCD: {metrics['scd']:.4f}",
+        f"- VIF: {metrics['vif']:.4f} (paper: {PAPER_BASELINE['VIF']})",
         f"- Qabf: {metrics['qabf']:.4f} (paper: {PAPER_BASELINE['Qabf']})",
         "",
         "## Notes",

@@ -5,7 +5,6 @@ from dataclasses import dataclass
 
 import numpy as np
 
-
 EPS = 1e-8
 
 
@@ -36,6 +35,33 @@ def scd(fused: np.ndarray, swir: np.ndarray, lwir: np.ndarray) -> float:
     return float(num / den)
 
 
+def vif(fused: np.ndarray, source: np.ndarray, sigma_nsq: float = 2.0) -> float:
+    """Visual Information Fidelity between fused image and a source image.
+
+    Simplified VIF based on local variance in sliding windows.
+    """
+    from scipy.ndimage import uniform_filter
+
+    eps = 1e-10
+    win = 11
+    mu_s = uniform_filter(source, size=win)
+    mu_f = uniform_filter(fused, size=win)
+    sigma_s = uniform_filter(source**2, size=win) - mu_s**2
+    sigma_f = uniform_filter(fused**2, size=win) - mu_f**2
+    sigma_sf = uniform_filter(source * fused, size=win) - mu_s * mu_f
+
+    sigma_s = np.maximum(sigma_s, 0.0)
+    sigma_f = np.maximum(sigma_f, 0.0)
+
+    g = sigma_sf / (sigma_s + eps)
+    sv_sq = sigma_f - g * sigma_sf
+    sv_sq = np.maximum(sv_sq, eps)
+
+    num = np.sum(np.log2(1.0 + g**2 * sigma_s / (sv_sq + sigma_nsq) + eps))
+    den = np.sum(np.log2(1.0 + sigma_s / sigma_nsq + eps))
+    return float(num / max(den, eps))
+
+
 def qabf(fused: np.ndarray, swir: np.ndarray, lwir: np.ndarray) -> float:
     # Lightweight proxy: edge retention ratio against stronger edge map.
     def grad(x: np.ndarray) -> np.ndarray:
@@ -56,15 +82,19 @@ class FusionMetrics:
     sf: float
     sd: float
     scd: float
+    vif_val: float
     qabf: float
 
 
 def compute_fusion_metrics(fused: np.ndarray, swir: np.ndarray, lwir: np.ndarray) -> FusionMetrics:
+    vif_sw = vif(fused, swir)
+    vif_lw = vif(fused, lwir)
     return FusionMetrics(
         en=entropy(fused),
         sf=spatial_frequency(fused),
         sd=standard_deviation(fused),
         scd=scd(fused, swir, lwir),
+        vif_val=0.5 * (vif_sw + vif_lw),
         qabf=qabf(fused, swir, lwir),
     )
 

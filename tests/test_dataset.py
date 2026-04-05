@@ -15,7 +15,9 @@ def test_pair_samples(tmp_path: Path) -> None:
     sw = tmp_path / "SWIR"
     lw = tmp_path / "LWIR"
     lb = tmp_path / "labels"
-    sw.mkdir(); lw.mkdir(); lb.mkdir()
+    sw.mkdir()
+    lw.mkdir()
+    lb.mkdir()
 
     _write_img(sw / "0001.png", 50)
     _write_img(lw / "0001.png", 60)
@@ -30,7 +32,9 @@ def test_dataset_getitem(tmp_path: Path) -> None:
     sw = tmp_path / "SWIR"
     lw = tmp_path / "LWIR"
     lb = tmp_path / "labels"
-    sw.mkdir(); lw.mkdir(); lb.mkdir()
+    sw.mkdir()
+    lw.mkdir()
+    lb.mkdir()
 
     _write_img(sw / "0001.png", 50)
     _write_img(lw / "0001.png", 60)

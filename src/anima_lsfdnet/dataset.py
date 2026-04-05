@@ -57,7 +57,9 @@ def _load_yolo_label(path: Path | None) -> torch.Tensor:
 
 
 class NSLSRDataset(Dataset[dict[str, torch.Tensor]]):
-    def __init__(self, swir_dir: str | Path, lwir_dir: str | Path, label_dir: str | Path | None = None):
+    def __init__(
+        self, swir_dir: str | Path, lwir_dir: str | Path, label_dir: str | Path | None = None
+    ):
         self.swir_dir = Path(swir_dir)
         self.lwir_dir = Path(lwir_dir)
         self.label_dir = Path(label_dir) if label_dir is not None else None
@@ -88,12 +90,14 @@ def main() -> None:
     args = parse_args()
     ds = NSLSRDataset(args.swir_dir, args.lwir_dir, args.label_dir)
     first = ds[0]
-    print({
-        "num_samples": len(ds),
-        "swir_shape": tuple(first["swir"].shape),
-        "lwir_shape": tuple(first["lwir"].shape),
-        "labels_shape": tuple(first["labels"].shape),
-    })
+    print(
+        {
+            "num_samples": len(ds),
+            "swir_shape": tuple(first["swir"].shape),
+            "lwir_shape": tuple(first["lwir"].shape),
+            "labels_shape": tuple(first["labels"].shape),
+        }
+    )
 
 
 if __name__ == "__main__":

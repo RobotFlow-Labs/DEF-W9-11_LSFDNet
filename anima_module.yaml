@@ -1,13 +1,46 @@
 name: lsfdnet
 version: 0.1.0
 type: perception
+description: "SWIR/LWIR image fusion and ship detection for maritime environments"
+paper: "arXiv:2507.20574"
+github: "RobotFlow-Labs/project_lsfdnet"
+hf_repo: "ilessio-aiflowlab/project_lsfdnet"
+
 inputs:
   - name: swir_image
     type: sensor_msgs/Image
+    encoding: mono8
+    description: "Short-Wave Infrared image (0.9-1.7 um)"
   - name: lwir_image
     type: sensor_msgs/Image
+    encoding: mono8
+    description: "Long-Wave Infrared image (8-14 um)"
+
 outputs:
   - name: fused_image
     type: sensor_msgs/Image
+    encoding: mono8
+    description: "Fused SWIR/LWIR image with enhanced ship contrast"
   - name: metadata
     type: std_msgs/String
+    description: "JSON metadata (runtime_ms, shape, model_version)"
+
+api:
+  port: 8080
+  endpoints:
+    - path: /health
+      method: GET
+    - path: /ready
+      method: GET
+    - path: /predict
+      method: POST
+
+docker:
+  image: anima-lsfdnet
+  base: anima-serve:jazzy
+  gpu: true
+
+capabilities:
+  - image_fusion
+  - ship_detection
+  - multimodal_perception

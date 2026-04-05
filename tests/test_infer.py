@@ -15,7 +15,8 @@ def test_folder_inference(tmp_path: Path) -> None:
     sw = tmp_path / "SWIR"
     lw = tmp_path / "LWIR"
     out = tmp_path / "out"
-    sw.mkdir(); lw.mkdir()
+    sw.mkdir()
+    lw.mkdir()
 
     _write_img(sw / "a.png", 100)
     _write_img(lw / "a.png", 140)

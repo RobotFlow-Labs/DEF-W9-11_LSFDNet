@@ -51,14 +51,23 @@ def run_folder_inference(
             fused = fused_t.squeeze().detach().cpu().numpy()
             out_path = fused_dir / f"{swir_path.stem}.png"
             save_gray_image(out_path, fused)
-            records.append({"id": swir_path.stem, "output": str(out_path), "runtime_ms": dt_ms, "shape": list(fused.shape)})
+            records.append(
+                {
+                    "id": swir_path.stem,
+                    "output": str(out_path),
+                    "runtime_ms": dt_ms,
+                    "shape": list(fused.shape),
+                }
+            )
 
     (out_dir / "predictions.jsonl").write_text("\n".join(json.dumps(r) for r in records))
     return records
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run LSFDNet fusion inference on SWIR/LWIR folders")
+    parser = argparse.ArgumentParser(
+        description="Run LSFDNet fusion inference on SWIR/LWIR folders"
+    )
     parser.add_argument("--swir-dir", required=True)
     parser.add_argument("--lwir-dir", required=True)
     parser.add_argument("--out", required=True)

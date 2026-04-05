@@ -13,8 +13,12 @@ IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff"}
 def pair_files_by_stem(swir_dir: str | Path, lwir_dir: str | Path) -> list[tuple[Path, Path]]:
     swir_dir = Path(swir_dir)
     lwir_dir = Path(lwir_dir)
-    sw_map = {p.stem: p for p in swir_dir.iterdir() if p.suffix.lower() in IMAGE_EXTS and p.is_file()}
-    lw_map = {p.stem: p for p in lwir_dir.iterdir() if p.suffix.lower() in IMAGE_EXTS and p.is_file()}
+    sw_map = {
+        p.stem: p for p in swir_dir.iterdir() if p.suffix.lower() in IMAGE_EXTS and p.is_file()
+    }
+    lw_map = {
+        p.stem: p for p in lwir_dir.iterdir() if p.suffix.lower() in IMAGE_EXTS and p.is_file()
+    }
     stems = sorted(set(sw_map) & set(lw_map))
     return [(sw_map[s], lw_map[s]) for s in stems]
 
