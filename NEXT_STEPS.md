@@ -37,9 +37,9 @@
 - [ ] Waiting for NSLSR/ISD datasets and pretrained weights (Baidu Pan)
 
 ## TODO
-- [ ] Download NSLSR dataset from Baidu Pan (manual, scp from Mac) -- code: shmp
-- [ ] Download ISD dataset from Baidu Pan (manual, scp from Mac)
-- [ ] Download pretrained weights from Baidu Pan (manual, scp from Mac) -- code: x7sf
+- [ ] Download NSLSR dataset from Baidu Pan -- code: shmp (MUST download in China, Baidu Pan)
+- [ ] Download ISD dataset from Baidu Pan (MUST download in China, Baidu Pan)
+- [ ] Download pretrained weights from Baidu Pan -- code: x7sf (MUST download in China, Baidu Pan)
 - [ ] Real-data training of fusion core on NSLSR (GPU batch finder + nohup)
 - [ ] Integrate YOLOv12 detection branch from reference repo (MMYOLO)
 - [ ] End-to-end joint training (fusion + detection)
@@ -50,8 +50,8 @@
 - [ ] Generate TRAINING_REPORT.md with final metrics
 
 ## Blocking
-- NSLSR and ISD datasets are on Baidu Pan -- requires manual download on Mac and scp to server
-- Pretrained weights are on Baidu Pan -- same manual download needed
+- NSLSR and ISD datasets are on Baidu Pan -- REQUIRES DOWNLOAD IN CHINA (Baidu Pan blocked outside China), then scp to server
+- Pretrained weights are on Baidu Pan -- same, must download in China
 - /mnt/forge-data disk is 100% full (0 bytes free) -- .venv created on artifacts disk as workaround
 - UV cache redirected: /home/datai/.cache/uv -> /mnt/artifacts-datai/cache/uv
 
